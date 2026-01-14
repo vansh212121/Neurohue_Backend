@@ -103,8 +103,8 @@ class UserService:
 
     async def get_users(
         self,
-        db: AsyncSession,
         *,
+        db: AsyncSession,
         current_user: User,
         skip: int = 0,
         limit: int = 50,
@@ -364,6 +364,7 @@ class UserService:
                 "deleted_user_email": user_to_delete.email,
             },
         )
+        return {"message": "User has been successfully deleted!"}
 
     async def deactivate_user(
         self, db: AsyncSession, *, user_id: uuid.UUID, current_user: User

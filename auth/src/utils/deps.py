@@ -175,7 +175,10 @@ class RoleChecker:
 
 # Role-based dependency instances
 require_admin = RoleChecker(UserRole.ADMIN)
-# next comes regional_admin, cdc manager, staff, therapist
+require_manager = RoleChecker(UserRole.REGIONAL_MANAGER)
+require_cdc = RoleChecker(UserRole.CDC)
+require_therapist = RoleChecker(UserRole.THERAPIST)
+require_staff = RoleChecker(UserRole.STAFF)
 
 
 # ================== RATE LIMITING ==================
