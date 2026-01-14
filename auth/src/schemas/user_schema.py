@@ -48,7 +48,7 @@ class UserBase(BaseModel):
     )
 
     # -------- string cleanup --------
-    @field_validator("full_name", "department")
+    @field_validator("full_name")
     @classmethod
     def clean_strings(cls, v: Optional[str]) -> Optional[str]:
         if v is None:

@@ -1,6 +1,6 @@
 # src/core/config.py
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
+from typing import Optional
 
 class Settings(BaseSettings):
     # --- Project Metadata ---
@@ -18,6 +18,8 @@ class Settings(BaseSettings):
 
     # --- Core Infrastructure Credentials ---
     DATABASE_URL: str
+    DATABASE_SYNC_URL: Optional[str]
+    
 
     REDIS_URL: str
 

@@ -8,6 +8,7 @@ from src.db.session import db
 from src.db.redis_conn import redis_client_instance
 from src.utils.deps import get_health_status
 from src.db import base
+from src.api.v1.endpoints import user, admin, auth
 
 
 @asynccontextmanager
@@ -35,11 +36,14 @@ def create_application() -> FastAPI:
 
     register_exception_handlers(app)
 
-    # routes come here
+    app.include_router(auth.router)
+    app.include_router(admin.router)
+    app.include_router(user.router)
 
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=[str(origin) for origin in settings.CORS_ORIGINS],
+        # allow_origins=[str(origin) for origin in settings.CORS_ORIGINS],
+        allow_origins=["*"],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

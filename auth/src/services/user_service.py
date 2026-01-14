@@ -217,9 +217,9 @@ class UserService:
         # 4. Delegate creation to the repository
         new_user = await self.user_repository.create(db=db, db_obj=user_to_create)
 
-        self._logger.info(
-            f"User {new_user.id} ({new_user.role}) created by {current_user.id}"
-        )
+        # self._logger.info(
+        #     f"User {new_user.id} ({new_user.role}) created by {current_user.id}"
+        # )
 
         return new_user
 

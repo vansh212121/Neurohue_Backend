@@ -1,7 +1,6 @@
 import logging
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
-from fastapi import HTTPException
 from src.core.exceptions import InternalServerError
 
 from sqlalchemy import text
@@ -75,45 +74,26 @@ class Database:
             finally:
                 await session.close()
 
-    # async def get_session(self) -> AsyncGenerator[AsyncSession, None]:
-    #     """
-    #     FastAPI dependency to get a database session.
-    #     This implements the "Unit of Work" pattern: a single transaction per request.
-    #     It yields a session, commits if the request is successful, and rolls back on any exception.
-    #     """
-    #     async with self._session_factory() as session:
-    #         try:
-    #             yield session
-    #             await session.commit()
-    #         except SQLAlchemyError as e:
-    #             await session.rollback()
-    #             # You can log the specific DB error here if needed
-    #             logger.error("Database transaction failed, rolling back.", exc_info=e)
-    #             # Re-raise a more generic server error to avoid leaking details
-    #             raise InternalServerError("A database error occurred.") from e
-    #         except Exception:
-    #             # Catch non-DB exceptions too
-    #             await session.rollback()
-    #             raise
     async def get_session(self) -> AsyncGenerator[AsyncSession, None]:
+        """
+        FastAPI dependency to get a database session.
+        This implements the "Unit of Work" pattern: a single transaction per request.
+        It yields a session, commits if the request is successful, and rolls back on any exception.
+        """
         async with self._session_factory() as session:
             try:
                 yield session
                 await session.commit()
-            except HTTPException:
-                # If the API endpoint raised a 404/400, let it pass through!
-                # But we must rollback first.
-                await session.rollback()
-                raise
             except SQLAlchemyError as e:
                 await session.rollback()
-                logger.error("Database transaction failed", exc_info=e)
+                # You can log the specific DB error here if needed
+                logger.error("Database transaction failed, rolling back.", exc_info=e)
+                # Re-raise a more generic server error to avoid leaking details
                 raise InternalServerError("A database error occurred.") from e
-            except Exception as e:
-                # Only catch unexpected server errors here
+            except Exception:
+                # Catch non-DB exceptions too
                 await session.rollback()
-                logger.exception("Unexpected error in DB session")
-                raise InternalServerError("An unexpected error occurred.") from e
+                raise
 
 
 # --- Create a single, reusable database instance ---
