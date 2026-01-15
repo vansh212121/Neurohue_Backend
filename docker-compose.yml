@@ -1,0 +1,10 @@
+services:
+  auth_service:
+    container_name: neurohue_auth
+    build:
+      context: ./auth
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./auth/.env
+    restart: always
