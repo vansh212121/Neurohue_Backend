@@ -45,8 +45,10 @@ class AuthService:
         Creates and returns a new access and refresh token pair for a user.
         This is a helper method used by login and refresh flows.
         """
+        claims = {"role": user.role}
+
         access_token = token_manager.create_token(
-            subject=str(user.id), token_type=TokenType.ACCESS
+            subject=str(user.id), token_type=TokenType.ACCESS, additional_claims=claims
         )
         refresh_token = token_manager.create_token(
             subject=str(user.id), token_type=TokenType.REFRESH

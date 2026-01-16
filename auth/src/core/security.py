@@ -149,6 +149,9 @@ class TokenManager:
             "jti": str(uuid.uuid4()),
             "type": token_type.value,
         }
+        
+        
+        
         if additional_claims:
             claims.update(additional_claims)
 

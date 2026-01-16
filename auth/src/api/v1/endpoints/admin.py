@@ -9,7 +9,7 @@ from src.schemas.user_schema import (
     UserSearchParams,
     UserListResponse,
 )
-from src.models.user_model import User
+from src.models.user_model import User, UserRole
 from src.db.session import get_session
 from src.utils.deps import (
     get_current_user,
@@ -136,6 +136,27 @@ async def deactivate(
     )
 
 
+@router.patch(
+    "/{user_id}/role_change",
+    status_code=status.HTTP_200_OK,
+    response_model=UserResponse,
+    summary="change a user's ro,e",
+    description="Update a user's role by it's ID (admin only)",
+    dependencies=[Depends(rate_limit_api), Depends(require_admin)],
+)
+async def change_role(
+    *,
+    user_id: uuid.UUID,
+    db: AsyncSession = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+    new_role: UserRole,
+):
+
+    return await user_service.change_role(
+        db=db, user_id=user_id, current_user=current_user, new_role=new_role
+    )
+
+
 @router.delete(
     "/{user_id}",
     status_code=status.HTTP_200_OK,
@@ -152,7 +173,9 @@ async def delete_user(
 ):
 
     await user_service.delete_user(
-        db=db, user_id_to_delete=user_id, current_user=current_user
+        db=db,
+        user_id_to_delete=user_id,
+        current_user=current_user,
     )
 
     return {"message": "User has been successfully deleted!"}
