@@ -8,7 +8,8 @@ from src.db.session import db
 from src.db.redis_conn import redis_client_instance
 from src.utils.deps import get_health_status
 from src.db import base
-from src.api.v1.endpoints import user
+from src.api.v1.endpoints import user, region
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -34,8 +35,9 @@ def create_application() -> FastAPI:
     )
 
     register_exception_handlers(app)
-    
+
     app.include_router(user.router)
+    app.include_router(region.router)
 
     app.add_middleware(
         CORSMiddleware,
