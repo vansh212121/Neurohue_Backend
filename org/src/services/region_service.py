@@ -234,6 +234,11 @@ class RegionService:
         region = await self.get_region_by_id(
             db=db, current_user=current_user, region_id=region_id
         )
+        raise_for_status(
+            condition=(region.status == new_status),
+            exception=ValidationError,
+            detail=f"Region is already {new_status}!"
+        )
 
         updated_region = await self.region_repository.update(
             db=db, region=region, fields_to_update={"status": new_status}

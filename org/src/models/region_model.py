@@ -1,13 +1,16 @@
 import uuid
 from datetime import datetime
-from typing import Optional
+from typing import Optional, TYPE_CHECKING, List
 from enum import Enum as PyEnum
 from sqlalchemy import Enum as SAEnum
 from sqlalchemy import func, Column, String, DateTime, Float
 from sqlalchemy.dialects.postgresql import (
     UUID as PG_UUID,
 )
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, SQLModel, Relationship
+
+if TYPE_CHECKING:
+    from src.models.center_model import Center
 
 
 class RegionStatus(str, PyEnum):
@@ -17,7 +20,9 @@ class RegionStatus(str, PyEnum):
 
 class RegionBase(SQLModel):
     name: str = Field(sa_column=Column(String(80), nullable=False, index=True))
-    region_code: str = Field(sa_column=Column(String(40), nullable=False, index=True, unique=True))
+    region_code: str = Field(
+        sa_column=Column(String(40), nullable=False, index=True, unique=True)
+    )
     general_location_description: Optional[str] = Field(
         sa_column=Column(String(400), default=None)
     )
@@ -47,6 +52,8 @@ class Region(RegionBase, table=True):
     )
 
     regional_manager_id: Optional[uuid.UUID] = Field(index=True, default=None)
+
+    centers: List["Center"] = Relationship(back_populates="region")
 
     # Timestamps
     created_at: datetime = Field(
