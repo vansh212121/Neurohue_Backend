@@ -137,6 +137,13 @@ class CenterService:
         await self._check_authorization(
             db=db, current_user=current_user, region_id=center_data.region_id
         )
+        region = await self.region_repository.get(db=db, obj_id=center_data.region_id)
+        raise_for_status(
+            condition=(region is None),
+            exception=ResourceAlreadyExists,
+            detail=f"Region with id {center_data.region_id} not Found",
+            resource_type="Region",
+        )
 
         existing_name = await self.center_repository.get_by_name(
             db=db, name=center_data.name
@@ -194,7 +201,7 @@ class CenterService:
             db=db, center_id=center_id, current_user=current_user
         )
 
-        self._check_authorization(
+        await self._check_authorization(
             current_user=current_user, db=db, region_id=center_to_update.region_id
         )
 
@@ -208,7 +215,7 @@ class CenterService:
 
         updated_center = await self.center_repository.update(
             db=db,
-            center=center_data,
+            center=center_to_update,
             fields_to_update=update_dict,
         )
 
@@ -272,7 +279,7 @@ class CenterService:
             db=db, center_id=center_id, current_user=current_user
         )
 
-        self._check_authorization(
+        await self._check_authorization(
             current_user=current_user, db=db, region_id=center_to_update.region_id
         )
 

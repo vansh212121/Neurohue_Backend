@@ -8,3 +8,13 @@ services:
     env_file:
       - ./auth/.env
     restart: always
+
+  org_service:
+    container_name: neurohue_org
+    build:
+      context: ./org
+    ports:
+      - "8001:8000"
+    env_file:
+      - ./org/.env
+    restart: always

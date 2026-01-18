@@ -170,7 +170,7 @@ class CenterUpdate(BaseModel):
         "street_address",
         "city",
         "state",
-        "zipcode",
+        "zip_code",
         "gst_number",
         "place_of_supply",
         "gst_status",
