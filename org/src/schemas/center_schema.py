@@ -51,7 +51,7 @@ class CenterBase(BaseModel):
         max_length=60,
         description="State of the center",
     )
-    zipcode: str = Field(
+    zip_code: str = Field(
         ...,
         min_length=3,
         max_length=20,
@@ -93,7 +93,7 @@ class CenterBase(BaseModel):
         "street_address",
         "city",
         "state",
-        "zipcode",
+        "zip_code",
         "gst_number",
         "place_of_supply",
         "gst_status",
@@ -144,7 +144,7 @@ class CenterBase(BaseModel):
 class CenterCreate(CenterBase):
     """Schema for creating a center."""
 
-    pass
+    region_id: uuid.UUID = Field(..., description="Regions ID")
 
 
 # ======================================================
@@ -156,7 +156,7 @@ class CenterUpdate(BaseModel):
     street_address: Optional[str] = Field(None, min_length=2, max_length=400)
     city: Optional[str] = Field(None, min_length=2, max_length=60)
     state: Optional[str] = Field(None, min_length=2, max_length=60)
-    zipcode: Optional[str] = Field(None, min_length=3, max_length=20)
+    zip_code: Optional[str] = Field(None, min_length=3, max_length=20)
     phone_number: Optional[str] = Field(None, min_length=7, max_length=20)
     email: Optional[EmailStr] = None
     gst_number: Optional[str] = Field(None, min_length=5, max_length=40)
@@ -221,6 +221,12 @@ class CenterUpdate(BaseModel):
         if not any(v is not None for v in values.values()):
             raise ValidationError("At least one field must be provided for update")
         return values
+
+
+class CenterMoveRegion(BaseModel):
+    """Schema for moving a center to a new region."""
+
+    new_region_id: uuid.UUID
 
 
 # ======================================================
